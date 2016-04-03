@@ -1,0 +1,237 @@
+import math
+import sys
+import os
+
+print("Programming Assignment 2")
+
+# List of Tuples with each element consisting of a dictionary and a boolean value
+#[({},bool])]
+
+inputs = [
+    ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'no'}, False),
+    ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'yes'}, False),
+    ({'level': 'Mid', 'lang': 'Python', 'tweets': 'no', 'phd': 'no'}, True),
+    ({'level': 'Junior', 'lang': 'Python', 'tweets': 'no', 'phd': 'no'}, True),
+    ({'level': 'Junior', 'lang': 'R', 'tweets': 'yes', 'phd': 'no'}, True),
+    ({'level': 'Junior', 'lang': 'R', 'tweets': 'yes', 'phd': 'yes'}, False),
+    ({'level': 'Mid', 'lang': 'R', 'tweets': 'yes', 'phd': 'yes'}, True),
+    ({'level': 'Senior', 'lang': 'Python', 'tweets': 'no', 'phd': 'no'}, False),
+    ({'level': 'Senior', 'lang': 'R', 'tweets': 'yes', 'phd': 'no'}, True),
+    ({'level': 'Junior', 'lang': 'Python', 'tweets': 'yes', 'phd': 'no'}, True),
+    ({'level': 'Senior', 'lang': 'Python', 'tweets': 'yes', 'phd': 'yes'}, True),
+    ({'level': 'Mid', 'lang': 'Python', 'tweets': 'no', 'phd': 'yes'}, True),
+    ({'level': 'Mid', 'lang': 'Java', 'tweets': 'yes', 'phd': 'no'}, True),
+    ({'level': 'Junior', 'lang': 'Python', 'tweets': 'no', 'phd': 'yes'}, False)
+]
+
+#Convert a tuple to a list
+new_input = list(inputs)
+print(new_input)
+
+#Attribute Variable
+
+
+#Accessors
+
+#Access first element of the tuple
+print(new_input[0])
+
+#Access dictionary part of the tuple - Client criteria
+for dictionary in new_input:
+    print("Dictionary is", dictionary[0])
+
+
+#Access boolean part of the tuple - Interview Fail
+goodInterviewCounter = 0
+badInterviewCounter = 0
+for input in new_input:
+    print("Test Failed :" , input[1])
+    if input[1] == True:
+        goodInterviewCounter += 1
+    else:
+        badInterviewCounter +=1
+
+
+#Access each elemeent of the dictionary
+counter = 1
+for element in new_input:
+    for key in element[:-1]: #Skips the boolean part of the element
+        print("Client #", counter)
+        print("Level is", key['level'])
+        print("Language is",key['lang'])
+        print("Uses Twitter?:", key['tweets'])
+        print("PHD?:", key['tweets'])
+        counter = counter + 1
+        print("\n")
+
+#Picking the best Attribute
+
+#Split based on Level
+seniorYesCounter = 0
+seniorNoCounter = 0
+midYesCounter = 0
+midNoCounter = 0
+juniorYesCounter = 0
+juniorNoCounter = 0
+for element in new_input:
+    for key in element[:-1]: #Skips the boolean part of the element
+        print("Level is", key['level'])
+
+    #If Level is Senior
+    if key['level'] == 'Senior':
+       if element[1] == True:
+            seniorYesCounter += 1
+       else:
+           seniorNoCounter += 1
+    #If Level is Mid
+    if key['level'] == 'Mid':
+        if element[1] == True:
+            midYesCounter += 1
+        else:
+            midNoCounter +=1
+
+    #If Level is Junior
+    if key['level'] == 'Junior':
+        if element[1] == True:
+            juniorYesCounter += 1
+        else:
+            juniorNoCounter +=1
+
+
+#Split based on Language
+javaYesCounter = 0
+javaNoCounter = 0
+pythonYesCounter = 0
+pythonNoCounter = 0
+rYesCounter = 0
+rNoCounter = 0
+for element in new_input:
+    for key in element[:-1]: #Skips the boolean part of the element
+        print("Language is", key['lang'])
+
+    #If Language is Java
+    if key['lang'] == 'Java':
+       if element[1] == True:
+            javaYesCounter += 1
+       else:
+           javaNoCounter += 1
+    #If Language is Python
+    if key['lang'] == 'Python':
+        if element[1] == True:
+            pythonYesCounter += 1
+        else:
+            pythonNoCounter +=1
+
+    #If Language is R
+    if key['lang'] == 'R':
+        if element[1] == True:
+            rYesCounter += 1
+        else:
+            rNoCounter +=1
+
+#Split based on Twitter
+doesTweetYesCounter = 0
+doesTweetNoCounter = 0
+doesNotTweetYesCounter = 0
+doesNotTweetNoCounter = 0
+
+for element in new_input:
+    for key in element[:-1]: #Skips the boolean part of the element
+        print("Active on Twitter?", key['tweets'])
+
+    #If person is active on twitter
+    if key['tweets'] == 'yes':
+       if element[1] == True:
+            doesTweetYesCounter += 1
+       else:
+           doesTweetNoCounter += 1
+            
+    #If person is not active on twitter
+    if key['tweets'] == 'no':
+        if element[1] == True:
+            doesNotTweetYesCounter += 1
+        else:
+            doesNotTweetNoCounter +=1
+
+#Split based on PHD
+doesHaveAPHDYesCounter = 0
+doesHaveAPHDNoCounter = 0
+doesNotHaveAPHDYesCounter = 0
+doesNotHaveAPHDNoCounter = 0
+
+for element in new_input:
+    for key in element[:-1]: #Skips the boolean part of the element
+        print("Does Have a PHD?", key['phd'])
+
+    #If person does have a phd
+    if key['phd'] == 'yes':
+       if element[1] == True:
+            doesHaveAPHDYesCounter += 1
+       else:
+           doesHaveAPHDNoCounter += 1
+            
+    #If person does not have a phd
+    if key['phd'] == 'no':
+        if element[1] == True:
+            doesNotHaveAPHDYesCounter += 1
+        else:
+            doesNotHaveAPHDNoCounter +=1
+
+print("Decision Tree Analysis : ID3 Tree")
+print("Training Set:")
+print("Total Number of Clients :",counter - 1)
+print("Good Interviews(Yes) :", goodInterviewCounter)
+print("Bad Interviews(No) :", badInterviewCounter)
+
+print("Attribute Splits\n")
+
+print("Level Split - Seniors(%d,%d)" % (seniorYesCounter, seniorNoCounter))
+print("Level Split - Mid(%d,%d)" % (midYesCounter, midNoCounter))
+class0 = 2.0
+class1 = 3.0
+total = class0 + class1
+x = class0/total
+y = class1/total
+print("Entrophy:", (-x) * math.log(x,2) - y * math.log(x,2))
+
+print("Level Split - Junior(%d,%d)" % (juniorYesCounter, juniorNoCounter))
+print("\n")
+print("Language Split - Java(%d,%d)" % (javaYesCounter, javaNoCounter))
+print("Language Split - Python(%d,%d)" % (pythonYesCounter, pythonNoCounter))
+print("Language Split - R(%d,%d)" % (rYesCounter, rNoCounter))
+
+print("\n")
+print("Twitter Split - doesTweet(%d,%d)" % (doesTweetYesCounter,doesTweetNoCounter))
+print("Twitter Split - doesNotTweet(%d,%d)" % (doesNotTweetYesCounter,doesNotTweetNoCounter))
+
+print("\n")
+print("Twitter Split - doesHaveAPHD(%d,%d)" % (doesHaveAPHDYesCounter,doesHaveAPHDNoCounter))
+print("Twitter Split - doesNotHaveAPHD(%d,%d)" % (doesNotHaveAPHDYesCounter,doesNotHaveAPHDNoCounter))
+print("\n")
+
+print("Split on (attribute with purest split)")
+
+#Reset Counter
+#Check Attribute Senior where to split
+print("Senior")
+counter = 0
+for element in new_input:
+    for key in element[:-1]: #Skips the boolean part of the element
+        # If Level is Senior
+        if key['level'] == 'Senior':
+            print(new_input[counter])
+            counter += 1
+        else:
+            counter += 1
+
+#Check attribute Junior where to split
+print("Junior")
+counter = 0
+for element in new_input:
+    for key in element[:-1]: #Skips the boolean part of the element
+        # If Level is Senior
+        if key['level'] == 'Junior':
+            print(new_input[counter])
+            counter += 1
+        else:
+            counter += 1

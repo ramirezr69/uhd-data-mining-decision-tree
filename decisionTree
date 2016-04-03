@@ -1,0 +1,261 @@
+import math
+import sys
+import os
+from collections import Counter
+
+print("Programming Assignment 2")
+'''
+Things to Do
+Calculate Frequency
+
+'''
+
+
+
+# List of Tuples with each element consisting of a dictionary and a boolean value
+#[({},bool])]
+
+inputs = [
+    ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'no'}, False),
+    ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'yes'}, False),
+    ({'level': 'Mid', 'lang': 'Python', 'tweets': 'no', 'phd': 'no'}, True),
+    ({'level': 'Junior', 'lang': 'Python', 'tweets': 'no', 'phd': 'no'}, True),
+    ({'level': 'Junior', 'lang': 'R', 'tweets': 'yes', 'phd': 'no'}, True),
+    ({'level': 'Junior', 'lang': 'R', 'tweets': 'yes', 'phd': 'yes'}, False),
+    ({'level': 'Mid', 'lang': 'R', 'tweets': 'yes', 'phd': 'yes'}, True),
+    ({'level': 'Senior', 'lang': 'Python', 'tweets': 'no', 'phd': 'no'}, False),
+    ({'level': 'Senior', 'lang': 'R', 'tweets': 'yes', 'phd': 'no'}, True),
+    ({'level': 'Junior', 'lang': 'Python', 'tweets': 'yes', 'phd': 'no'}, True),
+    ({'level': 'Senior', 'lang': 'Python', 'tweets': 'yes', 'phd': 'yes'}, True),
+    ({'level': 'Mid', 'lang': 'Python', 'tweets': 'no', 'phd': 'yes'}, True),
+    ({'level': 'Mid', 'lang': 'Java', 'tweets': 'yes', 'phd': 'no'}, True),
+    ({'level': 'Junior', 'lang': 'Python', 'tweets': 'no', 'phd': 'yes'}, False)
+]
+
+decisionTree = []
+
+#Class Node to hold all Attributes
+class Node:
+    value = ""
+
+    def __init__(self,val):
+        self.setValue(val)
+        self.children = []
+        self.attributes = []
+
+    def __str__(self):
+        return str(self.value)
+
+    def setValue(self, val):
+        self.value = val
+
+    def children(self):
+        return self._children
+
+    def attributes(self):
+        return self._attributes
+
+    def addChild(self,child):
+        self.children.append(child)
+
+
+    def addAttributes(self, val):
+        if not any(val in s for s in self.attributes):
+            self.attributes.append(val)
+            self.attributes.sort()
+
+
+def entropy(data, targetAttr):
+    #target attribute
+    #data
+    print('Target Attribute:',targetAttr)
+    trueCounter = 0
+    falseCounter = 0
+
+    valFreq = {}
+    dataEntropy = 0.0
+
+    #find index of the target attribute
+    i = 0
+
+
+    return dataEntropy
+
+
+#Split variables from the data
+def splitVariables(data):
+    #Get dictionary part of data
+    dictionary = []
+    for element in data:
+        dictionary.append(element[0])
+
+    #Store all the keys in an array
+    attr = []
+    for key in dictionary[0].keys():
+        attr.append(key)
+
+
+
+    #Store all keys in a list holding attributes
+    counter = 0
+
+    for x in attr:
+        sample = Node(attr[counter])
+        decisionTree.append(sample)
+        counter += 1
+    #return decisionTree
+
+
+    #Add each value to each node
+    for x in decisionTree:
+        key = str(x)
+        print("Hello", key)  # Access all attributes
+        for element in data:  # Access each dictionary
+            for first in element[:-1]:  # Skips the boolean part of the element Acess each key
+                print(key, first[key])  # Print all values of matching key
+                x.addChild(first[key])  # Add each Key to all Variables
+                x.addAttributes(first[key])  # Add each unique Key to node
+                # print('END - Value')
+        print('END - Key')
+
+#Determine the best split
+def bestSplit(attributes, data):
+    bestSplitAttribute = ''
+    target = ''
+    minEntropy = 0
+    frequency = 0
+    frequencyN = 0
+    for x in decisionTree:
+        key = str(x)
+        print("Hello", key) #Access all attributes
+        numberOfChildren = len(x.attributes)
+        print(numberOfChildren)
+        for element in data: #Access each dictionary
+            for first in element[:-1]:  # Skips the boolean part of the element Acess each key
+                print(key, first[key])  # Print all values of matching key
+
+                #target = x.children[0]
+                #print(target)
+                #for child in x.children:
+
+                #Frequency Counter
+                if first[key] == 'R':
+                    if element[1] == True:
+                        frequency += 1
+                    else:
+                        frequencyN += 1
+
+                #Solve for entrophy
+            #print('END - Value')
+        temp = entropy(new_input, key)
+        if temp <= minEntropy:
+            minEntropy = temp
+        print('END - Key')
+    print(frequency)
+    print(frequencyN)
+    print(minEntropy)
+
+#Convert a tuple to a list
+new_input = list(inputs)
+print(new_input)
+
+#Print first element
+print(new_input[0])
+
+#Print length of data set
+print(len(new_input))
+
+#Divide the data set into two class - Class 0(Yes) and Class 1(No)
+goodInterviews = []
+badInterviews = []
+x = 0
+for element in new_input:
+    if element[1] == True: #element[1] - True/False
+        goodInterviews.append(new_input[x])
+        x += 1
+    else:
+        badInterviews.append(new_input[x])
+        x += 1
+
+print("Class 0 - True Count =", len(goodInterviews))
+for z in goodInterviews:
+    print(z)
+print('\n')
+
+print("Class 1 - False Count = ", len(badInterviews))
+for z in badInterviews:
+    print(z)
+print('\n')
+
+#Attributes
+#Get Attributes
+dictionary = []
+for element in new_input:
+     dictionary.append(element[0])
+
+for x in dictionary:
+    print (x)
+
+#List of Functions to Make
+#DETERMINE ATTRIBUTES FUNCTION
+#DETERMINE BEST VARIABLE TO SPLIT ON(RECURSIVE)
+
+#Count the attributes
+attr = []
+for key in dictionary[0].keys():
+    attr.append(key)
+
+attributeCount =  len(dictionary[0].keys())
+print("Attribute Count = ", attributeCount)
+print("Attribute Count = ",len(attr))
+
+#Deleting attributes
+#attr.sort()
+#del attr[0]
+
+print(attr)
+
+#main
+splitVariables(new_input)
+bestSplit(decisionTree, new_input)
+
+
+#tree = splitVariables(new_input)
+print('Attributes:')
+for x in decisionTree:
+    print(x)
+    #x.addChild('Hello')
+
+#Print Children
+for x in decisionTree:
+    print(x.children)
+    print(x.attributes)
+    print(Counter(x.children))
+
+#How to access all values
+firstSplit = key
+
+
+#Printing the Tree
+from graphviz import Digraph
+
+dot = Digraph(comment='The Decision Tree')
+
+dot.node('A', 'Hired?')
+dot.node('B', firstSplit)
+dot.node('C', 'Junior')
+dot.node('D', 'Middle')
+dot.node('E', 'Senior')
+
+dot.edges(['AB', 'BC', 'BD', 'BE'])
+#dot.edge('B', 'L', constraint='false')
+
+
+from graphviz import Source
+
+src = Source('digraph "the holy hand grenade" { rankdir=LR; 1 -> 2 -> 3 -> lob }')
+
+print(dot.source)
+
+dot.render('test-output/decision-tree.gv', view=True)
+

@@ -1,0 +1,12 @@
+// The Decision Tree
+digraph {
+	A [label="Hired?"]
+	B [label=level]
+	C [label=Junior]
+	D [label=Middle]
+	E [label=Senior]
+		A -> B
+		B -> C
+		B -> D
+		B -> E
+}
