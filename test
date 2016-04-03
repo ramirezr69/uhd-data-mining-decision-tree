@@ -99,7 +99,11 @@ def entropy(children, data, targetAttr):
         grandTotal = float(total / len(data))
         x = float(class0 / total)
         y = float(class1 / total)
-        subEntrophy = ((-x) * math.log(x, 2) - y * math.log(x, 2)) * grandTotal
+        if x == 0 or y == 0:
+            subEntrophy = 0
+        else:
+            print('(BEFORE) Subentrophy for', ((-x) * math.log(x, 2) - y * math.log(y, 2)))
+            subEntrophy = ((-x) * math.log(x, 2) - y * math.log(y, 2)) * grandTotal
         print('Subentrophy for',children[count])
         print(subEntrophy)
         dataEntropy += subEntrophy
@@ -145,8 +149,6 @@ def splitVariables(data):
 
 #Determine the best split
 def bestSplit(attributes, data):
-    bestSplitAttribute = ''
-    target = ''
     entropylist = []
     frequency = 0
     frequencyN = 0
@@ -177,7 +179,12 @@ def bestSplit(attributes, data):
         print('END - Key')
     print(frequency)
     print(frequencyN)
+    print(entropylist)
     print(min(entropylist))
+    bestSplitAttribute = entropylist.index(min(entropylist))
+    print(bestSplitAttribute)
+    return bestSplitAttribute
+
 
 #Convert a tuple to a list
 new_input = list(inputs)
@@ -241,14 +248,14 @@ print(attr)
 
 #main
 splitVariables(new_input)
-bestSplit(decisionTree, new_input)
-
+split = bestSplit(decisionTree, new_input)
+print('The best attribute to split is' ,str(decisionTree[split]))
 
 #tree = splitVariables(new_input)
 print('Attributes:')
 for x in decisionTree:
     print(x)
-    #x.addChild('Hello')
+
 
 #Print Children
 for x in decisionTree:

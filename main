@@ -187,12 +187,18 @@ print("Attribute Splits\n")
 
 print("Level Split - Seniors(%d,%d)" % (seniorYesCounter, seniorNoCounter))
 print("Level Split - Mid(%d,%d)" % (midYesCounter, midNoCounter))
-class0 = 2.0
+class0 = 3.0
 class1 = 3.0
 total = class0 + class1
-x = class0/total
+x = class0/ total
 y = class1/total
-print("Entrophy:", (-x) * math.log(x,2) - y * math.log(x,2))
+if x == 0 or y == 0:
+    print("Entrophy:", 0)
+else:
+    print("Entrophy:", ((-x) * math.log(x,2)) - (y * math.log(y,2)))
+print(-x)
+print(math.log(x,2))
+print(y)
 
 print("Level Split - Junior(%d,%d)" % (juniorYesCounter, juniorNoCounter))
 print("\n")
