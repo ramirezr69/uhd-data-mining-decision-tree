@@ -6,7 +6,8 @@ from collections import Counter
 print("Programming Assignment 2")
 '''
 Things to Do
-Calculate Frequency
+Recursively Calling the Formula
+Visualizing Decision Tree
 
 '''
 
@@ -65,22 +66,51 @@ class Node:
             self.attributes.sort()
 
 
-def entropy(data, targetAttr):
+def entropy(children, data, targetAttr):
+    #children
     #target attribute
     #data
     print('Target Attribute:',targetAttr)
+    print(children)
+
+
+    dataEntropy = 0.0
     trueCounter = 0
     falseCounter = 0
 
-    valFreq = {}
-    dataEntropy = 0.0
 
-    #find index of the target attribute
-    i = 0
-
-
+    count = 0
+    print('Number of Children:' ,len(children))
+    print('Length of Data', len(data))
+    while (count < len(children)): #Each child in the node
+        print(count, children[count]) #
+        for element in data:  # Access each dictionary
+            for first in element[:-1]:  # Skips the boolean part of the element Acess each key
+                if element[1] == True and first[targetAttr] == children[count]:
+                    trueCounter += 1
+                elif element[1] == False and first[targetAttr] == children[count]:
+                    falseCounter += 1
+        class0 = float(trueCounter)
+        print("Class 0", trueCounter)
+        trueCounter = 0
+        class1 = float(falseCounter)
+        print("Class 1", falseCounter)
+        falseCounter = 0
+        total = class0 + class1
+        grandTotal = float(total / len(data))
+        x = float(class0 / total)
+        y = float(class1 / total)
+        if x == 0 or y == 0:
+            subEntrophy = 0
+        else:
+            print('(BEFORE) Subentrophy for', ((-x) * math.log(x, 2) - y * math.log(y, 2)))
+            subEntrophy = ((-x) * math.log(x, 2) - y * math.log(y, 2)) * grandTotal
+        print('Subentrophy for',children[count])
+        print(subEntrophy)
+        dataEntropy += subEntrophy
+        count = count + 1
+    print('Total Entrophy:' , dataEntropy)
     return dataEntropy
-
 
 #Split variables from the data
 def splitVariables(data):
@@ -120,9 +150,7 @@ def splitVariables(data):
 
 #Determine the best split
 def bestSplit(attributes, data):
-    bestSplitAttribute = ''
-    target = ''
-    minEntropy = 0
+    entropylist = []
     frequency = 0
     frequencyN = 0
     for x in decisionTree:
@@ -147,13 +175,17 @@ def bestSplit(attributes, data):
 
                 #Solve for entrophy
             #print('END - Value')
-        temp = entropy(new_input, key)
-        if temp <= minEntropy:
-            minEntropy = temp
+        minEntropy = entropy(x.attributes, new_input, key)
+        entropylist.append(minEntropy)
         print('END - Key')
     print(frequency)
     print(frequencyN)
-    print(minEntropy)
+    print(entropylist)
+    print(min(entropylist))
+    bestSplitAttribute = entropylist.index(min(entropylist))
+    print(bestSplitAttribute)
+    return bestSplitAttribute
+
 
 #Convert a tuple to a list
 new_input = list(inputs)
@@ -217,14 +249,19 @@ print(attr)
 
 #main
 splitVariables(new_input)
-bestSplit(decisionTree, new_input)
+splitIndex = bestSplit(decisionTree, new_input)
 
+splitIndex = 3 #Testing
+
+bestSplitStr = str(decisionTree[splitIndex])
+print('The best attribute to split is', bestSplitStr)
+print(decisionTree[splitIndex].attributes)
 
 #tree = splitVariables(new_input)
 print('Attributes:')
 for x in decisionTree:
     print(x)
-    #x.addChild('Hello')
+
 
 #Print Children
 for x in decisionTree:
@@ -233,21 +270,31 @@ for x in decisionTree:
     print(Counter(x.children))
 
 #How to access all values
-firstSplit = key
-
-
+A = 'A'
+B = 'B'
+characterIndex = 67
 #Printing the Tree
 from graphviz import Digraph
 
 dot = Digraph(comment='The Decision Tree')
 
-dot.node('A', 'Hired?')
-dot.node('B', firstSplit)
-dot.node('C', 'Junior')
-dot.node('D', 'Middle')
-dot.node('E', 'Senior')
+#Print the Title Node and the Best Split
+dot.node('A', 'Hired?') #65
+dot.node('B', bestSplitStr) #66
 
-dot.edges(['AB', 'BC', 'BD', 'BE'])
+counter = 0
+while counter < len(decisionTree[splitIndex].attributes):
+    dot.node(chr(characterIndex), decisionTree[splitIndex].attributes[counter])
+    temp = chr(characterIndex)
+    dot.edges([B + temp])
+    characterIndex += 1
+    counter += 1
+print(chr(characterIndex))
+
+#Print the children
+
+dot.edges([A + B])
+
 #dot.edge('B', 'L', constraint='false')
 
 
@@ -256,6 +303,5 @@ from graphviz import Source
 src = Source('digraph "the holy hand grenade" { rankdir=LR; 1 -> 2 -> 3 -> lob }')
 
 print(dot.source)
-
+print(ord('A'))
 dot.render('test-output/decision-tree.gv', view=True)
-
