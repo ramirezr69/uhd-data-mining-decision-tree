@@ -22,11 +22,9 @@ Extra Things to do
 Change Node Shape
 Format Counters
 '''
-
-
-
 # List of Tuples with each element consisting of a dictionary and a boolean value
 #[({},bool])]
+
 
 inputs = [
     ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'no'}, False),
@@ -45,6 +43,32 @@ inputs = [
     ({'level': 'Junior', 'lang': 'Python', 'tweets': 'no', 'phd': 'yes'}, False)
 ]
 
+#Test for root node LANG:
+inputs2 = [
+    ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'no',}, False),
+    ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'yes'}, False),
+    ({'level': 'Mid', 'lang': 'Python', 'tweets': 'no', 'phd': 'no'}, True),
+    ({'level': 'Junior', 'lang': 'Python', 'tweets': 'no', 'phd': 'no'}, True),
+    ({'level': 'Junior', 'lang': 'R', 'tweets': 'yes', 'phd': 'no'}, True),
+    ({'level': 'Junior', 'lang': 'R', 'tweets': 'yes', 'phd': 'yes'}, False),
+    ({'level': 'Mid', 'lang': 'R', 'tweets': 'yes', 'phd': 'yes'}, True),
+    ({'level': 'Senior', 'lang': 'Python', 'tweets': 'no', 'phd': 'no'}, False),
+    ({'level': 'Senior', 'lang': 'R', 'tweets': 'yes', 'phd': 'no'}, True),
+    ({'level': 'Junior', 'lang': 'Python', 'tweets': 'yes', 'phd': 'no'}, True),
+    ({'level': 'Senior', 'lang': 'Python', 'tweets': 'yes', 'phd': 'yes'}, True),
+    ({'level': 'Mid', 'lang': 'Python', 'tweets': 'no', 'phd': 'yes'}, False),
+    ({'level': 'Mid', 'lang': 'Java', 'tweets': 'yes', 'phd': 'no'}, False),
+    ({'level': 'Junior', 'lang': 'Python', 'tweets': 'no', 'phd': 'yes'}, False)
+
+]
+
+#Sample Tests
+inputs3 = [
+    ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'no', 'swag': 'no'}, False),
+    ({'level': 'Mid', 'lang': 'R', 'tweets': 'yes', 'phd': 'no', 'swag': 'no'}, False),
+    ({'level': 'Junior', 'lang': 'R', 'tweets': 'yes', 'phd': 'no', 'swag': 'yes'}, True),
+    ({'level': 'Mid', 'lang': 'Python', 'tweets': 'no', 'phd': 'no', 'swag': 'no'}, False),
+]
 decisionTree = []
 
 #Class Node to hold all Attributes
@@ -102,15 +126,11 @@ def entropy(children, data, targetAttr):
     #data
     print('Target Attribute:',targetAttr)
     print(children)
-
-
     dataEntropy = 0.0
     trueCounter = 0
     falseCounter = 0
-
-
     count = 0
-    print('Number of Children:' ,len(children))
+    print('Number of Attributes:' ,len(children))
     print('Length of Data', len(data))
     while (count < len(children)): #Each child in the node
         print(count, children[count]) #
@@ -170,7 +190,7 @@ def splitVariables(data):
         print("Hello", key)  # Access all attributes
         for element in data:  # Access each dictionary
             for first in element[:-1]:  # Skips the boolean part of the element Acess each key
-                print(key, first[key])  # Print all values of matching key
+                #print(key, first[key])  # Print all values of matching key
                 x.addChild(first[key])  # Add each Key to all Variables
                 x.addAttributes(first[key])  # Add each unique Key to node
                 # print('END - Value')
@@ -179,17 +199,11 @@ def splitVariables(data):
 #Determine the best split
 def find_best_split(attributes, data):
     entropylist = []
-    frequency = 0
-    frequencyN = 0
     for x in attributes:
         key = str(x)
         print("Hello", key) #Access all attributes
         numberOfChildren = len(x.attributes)
         print(numberOfChildren)
-        for element in data: #Access each dictionary
-            for first in element[:-1]:  # Skips the boolean part of the element Acess each key
-                print(key, first[key])  # Print all values of matching key
-
         minEntropy = entropy(x.attributes, new_input, key)
         entropylist.append(minEntropy)
         print('END - Key')
@@ -238,18 +252,33 @@ def split_training_set(parent,target, data): #(Parent, Child Attribute to test, 
                 split_training_data.append(element)
     return split_training_data
 
+def child_entrophy(parent, child , data):
+    print('Hello from child_entrophy')
+    print('We are calculating entrophy and returning to see which one is the lowest one')
+    print(parent,child)
+    test = attributeCounter(parent, child, data)
+    print('Attribute Counter -- ',test[0], test[1])
 
-def split_child(child, data):
+
+
+def split_child(child, data,attributesToSplit):
     print('Hello from child split')
     print(child)
-    print(len(data))
-    for x in attributeLeftTree:
+    print('Data Length',len(data))
+    for x in data:
+        print(x)
+    for x in attributesToSplit:
         print x
-    print
+        temp = str(x)
+        childList = create_children_from(temp,data)
+        print(childList)
+        for y in childList:
+            child_entrophy(temp, y, data)
+
 
 
 #recursiveSplit
-def split(parent, data):
+def split(parent, data, attributesToSplit):
     #Attribute To Start on is
     print("A<-RootNode is :", str(parent))
 
@@ -277,8 +306,10 @@ def split(parent, data):
             print('No Need to Split - SET IS PURE')
         else:
             print(test[0], test[1])
-            print('Split!')
-            split_child(x, tempList)
+            print('Impure - Split!')
+            for element in attributesToSplit:
+                print(str(x), '->', str(element))
+            split_child(x, tempList, attributesToSplit)
         y += 1
 
 
@@ -304,37 +335,10 @@ def split(parent, data):
 
 #Convert a tuple to a list
 new_input = list(inputs)
-print(new_input)
-
-#Print first element
-print(new_input[0])
 
 #Print length of data set
 print(len(new_input))
 
-#Divide the data set into two class - Class 0(Yes) and Class 1(No)
-goodInterviews = []
-badInterviews = []
-x = 0
-for element in new_input:
-    if element[1] == True: #element[1] - True/False
-        goodInterviews.append(new_input[x])
-        x += 1
-    else:
-        badInterviews.append(new_input[x])
-        x += 1
-
-print("Class 0 - True Count =", len(goodInterviews))
-for z in goodInterviews:
-    print(z)
-print('\n')
-
-print("Class 1 - False Count = ", len(badInterviews))
-for z in badInterviews:
-    print(z)
-print('\n')
-
-#Attributes
 #Get Attributes
 dictionary = []
 for element in new_input:
@@ -370,18 +374,13 @@ for x in decisionTree:
     print(x)
     attributeLeftTree.append(str(x))
 
-
-#Print Children
-for x in decisionTree:
-    print(x.children)
-    print(x.attributes)
-    print(Counter(x.children))
-
 #main
 splitVariables(new_input)
 splitIndex = find_best_split(decisionTree, new_input)
 
-#splitIndex = 2 #Testing
+#splitIndex = 0 #Testing
+rootNode = str(decisionTree[splitIndex])
+print('Root Node:', rootNode)
 bestSplitStr = str(decisionTree[splitIndex])
 print('The best attribute to split is', bestSplitStr)
 print("Subset: ", decisionTree[splitIndex].children)
@@ -410,11 +409,13 @@ B = 'B'
 characterIndex = 67
 #Printing the Tree
 from graphviz import Digraph
-
 dot = Digraph(comment='The Decision Tree')
 #Print the Title Node and the Best Split
 dot.node('A', 'Hired?') #65
 dot.node('B', bestSplitStr) #66
+
+#Print the children
+dot.edges([A + B])
 
 counter = 0
 while counter < len(decisionTree[splitIndex].attributes):
@@ -425,9 +426,7 @@ while counter < len(decisionTree[splitIndex].attributes):
     counter += 1
 
 
-#Print the children
 
-dot.edges([A + B])
 
 #dot.edge('B', 'L', constraint='false')
 
@@ -443,4 +442,5 @@ dot.render('test-output/decision-tree.gv', view=True)
 
 #test = attributeCounter('level','Mid',new_input)
 #print(test[0],test[1])
-split(decisionTree[splitIndex],new_input)
+
+split(decisionTree[splitIndex],new_input, attributeLeftTree)

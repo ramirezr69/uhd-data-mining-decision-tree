@@ -2,11 +2,11 @@
 digraph {
 	A [label="Hired?"]
 	B [label=level]
+		A -> B
 	C [label=Junior]
 		B -> C
 	D [label=Mid]
 		B -> D
 	E [label=Senior]
 		B -> E
-		A -> B
 }
