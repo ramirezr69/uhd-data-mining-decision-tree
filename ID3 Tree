@@ -212,7 +212,8 @@ def printTree(root, characterIndex): #(node, character Index)
             #Create an egde for each one
             counter += 1
 
-
+def TreeGrowth(parent):
+    print()
 
 #ID3 Decision Tree
 def decisionTree(data):
