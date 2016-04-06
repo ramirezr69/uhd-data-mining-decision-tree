@@ -25,10 +25,16 @@ ID3 algorithm
 Extra Things to do
 Change Node Shape
 Format Counters
+
+
+Problems that might reoccur:
+Keys aren't being deleted yet
+
 '''
 # List of Tuples with each element consisting of a dictionary and a boolean value
 #[({},bool])]
-
+characterIndex = 65
+availableIndex = 65
 inputs = [
     ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'no'}, False),
     ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'yes'}, False),
@@ -47,7 +53,7 @@ inputs = [
 ]
 
 #Test for root node LANG:
-inputs2  = [
+inputs2 = [
     ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'no',}, False),
     ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'yes'}, False),
     ({'level': 'Mid', 'lang': 'Python', 'tweets': 'no', 'phd': 'no'}, True),
@@ -104,9 +110,6 @@ def get_keys(data):
     # Store all keys
     for key in dictionary[0].keys():
         attr.append(key)
-
-    print(attr)
-
     return attr
 
 
@@ -245,24 +248,118 @@ def best_split(data,targetAttr):
 
 #create a node in a digraph
 
-def printTree(root, characterIndex): #(node, character Index)
-    print('Building a Tree for', str(root))
-    print(characterIndex)
-    dot.node(chr(characterIndex), str(root))
-    if len(root.children) != 0: #If Parents have children
-        counter = 1
-        print(counter)
-        for x in root.children:
-            #Create a child with each one
-            printTree(x, characterIndex + counter)
-            #Create an egde for each one
+def printMyTree(node, characterIndex): #(node)
+    dot.node(chr(characterIndex), str(node))
+    print(node)
+    if node.children != 0:
+        parent = characterIndex
+        print parent
+        for x in node.children:
+            print(x)
+            characterIndex += 1
+            dot.node(chr(characterIndex), str(x))
+            #dot.edges([chr(parent) + chr(characterIndex)])
+            print(characterIndex)
+            printMyTree(x, characterIndex)
+        print(characterIndex)
+        characterIndex += len(node.children)
+        print characterIndex
+    if not node.children:
+        print 'I have no Children!'
+
+def printTree(node, characterIndex): #(node)
+    characterIndex +=  1
+    dot.node(chr(characterIndex), str(node))
+    print(node)
+    if node.children != 0:
+        parent = characterIndex
+        #print parent
+        for x in node.children:
+            characterIndex += 1
+            #dot.node(chr(characterIndex), str(x))
+            #dot.edges([chr(parent) + chr(characterIndex)])
+            #print(characterIndex)
+            printTree(x, characterIndex)
+        characterIndex += len(node.children)
+
+
+def tree2(node):
+    global characterIndex
+    global availableIndex
+    print('Parent', str(node))
+    print('Parent Index', characterIndex)
+
+    if not node.children:
+        print 'I have no Children!'
+
+    children_nodes = []
+    children_nodes_index = []
+
+    if node.children != 0:
+        for x in node.children:
+            print('Child', str(x))
+            characterIndex += 1
+            availableIndex += 1
+            print 'Child Index',availableIndex
+            children_nodes.append(x)
+            children_nodes_index.append(availableIndex)
+        print('\n')
+        counter = 0
+        for child in children_nodes:
+            characterIndex = children_nodes_index[counter]
             counter += 1
+            tree(child)
+
+
+#Print the children
+#dot.edges([A + B])
+#dot.edge('B', 'L', constraint='false')
+def tree(node):
+    global characterIndex
+    global availableIndex
+    print('Parent', str(node))
+    print('Parent Index', characterIndex)
+    dot.node(chr(characterIndex), str(node))  # 65
+
+    parent = characterIndex
+
+    if not node.children:
+        print 'I have no Children!'
+
+    children_nodes = []
+    children_nodes_index = []
+
+    if node.children != 0:
+        for x in node.children:
+            print('Child', str(x))
+            characterIndex += 1
+            availableIndex += 1
+            dot.edges([chr(parent) + chr(availableIndex)])
+            print(parent)
+            print('will connect to')
+            print 'Child Index',availableIndex
+            children_nodes.append(x)
+            children_nodes_index.append(availableIndex)
+        print('\n')
+        counter = 0
+        for child in children_nodes:
+            characterIndex = children_nodes_index[counter]
+            counter += 1
+            tree(child)
+
+
+
+
+
 
 def TreeGrowth(node, data): # {node : examples}
     print '\nFunction Tree Growth'
     print(node)
 
     attr = get_keys(data)
+
+    remainingKeys = delete_key(str(node), attr)
+
 
     # 3. For each value of A, create a new child node
     root_node_children = create_children_from(node, data)
@@ -290,9 +387,13 @@ def TreeGrowth(node, data): # {node : examples}
 
         else:
             print 'Split! : Grow Tree'
-            child_split = best_split(child.trainingset, attr)
+            child_split = best_split(child.trainingset, remainingKeys)
             print 'Child Split is', child_split
             node_to_split = Node(child_split)
+
+            #Add child to node
+            child.addChild(node_to_split)
+
             ## Problem is value is getting treated like a key
             TreeGrowth(node_to_split, child.trainingset)
 
@@ -312,6 +413,8 @@ def decisionTree(data):
 
     # Get first element
     dictionary.append(new_input[0][0])
+
+
 
     # Store all keys
     for key in dictionary[0].keys():
@@ -335,56 +438,27 @@ def decisionTree(data):
     print('\n')
 
     remainingKeys = delete_key(str(root_node),attr)
+
+
+
     #Tree Growth based on root node
     TreeGrowth(root_node, data)
+    print('\n' * 5)
+    #Print rootNode
+    #print(root_node)
+    #dot.node('A', str(root_node))  # 65
 
-    # 2. Decision attribute for this node <-A
+    tree(root_node)
 
-    # 3. For each value of A, create a new child node
-    root_node_children = create_children_from(starting_split,data)
-    for x in root_node_children:
-        #print(x)
-        child_node = Node(x)
-        root_node.addChild(child_node)
-
-    #Print Children
-    #print(root_node_children)
-
-    # 4. Split training{Examples to child nodes}
-    for child in root_node.children:
-        temp_List = split_training_set(str(root_node), str(child), data)
-        for y in temp_List:
-            child.add_data(y)
-
-
-    # 5. For each child node /subset
-    for node in root_node.children:
-        #print(node)
-        subset = node.trainingset
-        # if subset is pure: STOP
-        test = attributeCounter(str(root_node), str(node), subset)
-        if test[0] == 0 or test[1] == 0:
-            print
-            #print(test[0], test[1])
-            #rint('No Need to Split - SET IS PURE')
-
-        # else: Split (child_node, {subset})
-        else:
-            child_split = best_split(subset, remainingKeys)
-            #print('Child Split for', str(node),'is' ,child_split)
-
-
-    #Print the tree Node based on its children
-    #printTree(root_node,65)
-    #dot.render('test-output/decision-tree.gv', view=True)
+    dot.render('test-output/decision-tree.gv', view=True)
 
 
 #Printing the Tree
-from graphviz import Digraph
 
-dot = Digraph(comment='The Decision Tree')
+
+#dot = Digraph(comment='The Decision Tree')
 #Print the Title Node and the Best Split
-dot.node('A', 'Hired?') #65
+
 
 #Print the children
 #dot.edges([A + B])

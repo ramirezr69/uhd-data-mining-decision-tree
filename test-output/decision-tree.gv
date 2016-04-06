@@ -1,12 +1,22 @@
 // The Decision Tree
 digraph {
-	A [label="Hired?"]
-	B [label=level]
+	A [label=level]
 		A -> B
-	C [label=Junior]
-		B -> C
-	D [label=Mid]
-		B -> D
-	E [label=Senior]
+		A -> C
+		A -> D
+	B [label=Senior]
 		B -> E
+	E [label=tweets]
+		E -> F
+		E -> G
+	F [label=no]
+	G [label=yes]
+	C [label=Mid]
+	D [label=Junior]
+		D -> H
+	H [label=phd]
+		H -> I
+		H -> J
+	I [label=no]
+	J [label=yes]
 }
