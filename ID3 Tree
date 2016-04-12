@@ -6,6 +6,7 @@ from collections import Counter
 from graphviz import Digraph
 dot = Digraph(comment='The Decision Tree')
 
+
 print("Programming Assignment 2")
 
 '''
@@ -25,11 +26,18 @@ ID3 algorithm
 Extra Things to do
 Change Node Shape
 Format Counters
+
+
+Problems that might reoccur:
+Keys aren't being deleted yet
+
 '''
 # List of Tuples with each element consisting of a dictionary and a boolean value
 #[({},bool])]
+characterIndex = 65
+availableIndex = 65
 
-inputs= [
+inputs = [
     ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'no'}, False),
     ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'yes'}, False),
     ({'level': 'Mid', 'lang': 'Python', 'tweets': 'no', 'phd': 'no'}, True),
@@ -45,25 +53,34 @@ inputs= [
     ({'level': 'Mid', 'lang': 'Java', 'tweets': 'yes', 'phd': 'no'}, True),
     ({'level': 'Junior', 'lang': 'Python', 'tweets': 'no', 'phd': 'yes'}, False)
 ]
-#Test for root node LANG:
+
+#Practice Test for Lang
 inputs2 = [
-    ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'no',}, False),
+    ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'no'}, False),
     ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'yes'}, False),
     ({'level': 'Mid', 'lang': 'Python', 'tweets': 'no', 'phd': 'no'}, True),
     ({'level': 'Junior', 'lang': 'Python', 'tweets': 'no', 'phd': 'no'}, True),
     ({'level': 'Junior', 'lang': 'R', 'tweets': 'yes', 'phd': 'no'}, True),
-    ({'level': 'Junior', 'lang': 'R', 'tweets': 'yes', 'phd': 'yes'}, False),
+    ({'level': 'Junior', 'lang': 'Java', 'tweets': 'yes', 'phd': 'yes'}, False),
     ({'level': 'Mid', 'lang': 'R', 'tweets': 'yes', 'phd': 'yes'}, True),
     ({'level': 'Senior', 'lang': 'Python', 'tweets': 'no', 'phd': 'no'}, False),
     ({'level': 'Senior', 'lang': 'R', 'tweets': 'yes', 'phd': 'no'}, True),
     ({'level': 'Junior', 'lang': 'Python', 'tweets': 'yes', 'phd': 'no'}, True),
     ({'level': 'Senior', 'lang': 'Python', 'tweets': 'yes', 'phd': 'yes'}, True),
-    ({'level': 'Mid', 'lang': 'Python', 'tweets': 'no', 'phd': 'yes'}, False),
-    ({'level': 'Mid', 'lang': 'Java', 'tweets': 'yes', 'phd': 'no'}, False),
-    ({'level': 'Junior', 'lang': 'Python', 'tweets': 'no', 'phd': 'yes'}, False)
+    ({'level': 'Mid', 'lang': 'Python', 'tweets': 'no', 'phd': 'yes'}, True),
+    ({'level': 'Mid', 'lang': 'Python', 'tweets': 'yes', 'phd': 'no'}, True),
+    ({'level': 'Junior', 'lang': 'Java', 'tweets': 'no', 'phd': 'yes'}, False)
 ]
 
+#Test for root node LANG:
 
+#Sample Tests
+inputs3 = [
+    ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'no', 'swag': 'no'}, False),
+    ({'level': 'Mid', 'lang': 'R', 'tweets': 'yes', 'phd': 'no', 'swag': 'no'}, False),
+    ({'level': 'Junior', 'lang': 'R', 'tweets': 'yes', 'phd': 'no', 'swag': 'yes'}, True),
+    ({'level': 'Mid', 'lang': 'Python', 'tweets': 'no', 'phd': 'no', 'swag': 'yes'}, True),
+]
 
 class Node:
     value = ""
@@ -91,10 +108,34 @@ class Node:
     def add_data(self, data):
         self.trainingset.append(data)
 
+# Get currentKey
+def get_keys(data):
+    # Variables
+    dictionary = []  # hold dictionary part of tuple
+    attr = []  # holds all the current keys
+
+    # Get first element
+    dictionary.append(new_input[0][0])
+
+    # Store all keys
+    for key in dictionary[0].keys():
+        attr.append(key)
+    return attr
+
+# Delete a key of current keys
+def delete_key(key,attributes):
+    # Delete the Key off the attributres
+    counter = 0
+    for x in attributes:
+        if str(x) == str(key):
+            del attributes[counter]
+        counter += 1
+    print('\n')
+    return attributes
 
 # Get unique values for each key
 def create_children_from(key,data):
-    print('Getting unique values for key', key)
+    #print('Getting unique values for key', key)
     #Returns a list of children
     temp_List = []
     for element in data:  # Access each dictionary
@@ -102,7 +143,7 @@ def create_children_from(key,data):
             val = first[str(key)]
             if not any(val in s for s in temp_List):
                 temp_List.append(val)  # Print all values of matching key
-    print('Frequent values are', temp_List)
+    #print('Frequent values are', temp_List)
     return temp_List #Return list of children
 
 #Split each child node training set to each individual node
@@ -130,19 +171,33 @@ def attributeCounter(parent, target, data):  # (Parent, Child Attribute to test,
     list = [trueCounter, falseCounter] #Returns a list of values for [True, False]
     return list
 
+def isPure(parent, target, data):  # (Parent, Child Attribute to test, input data)
+    trueCounter = 0
+    falseCounter = 0
+    for element in data:  # Access each dictionary
+        for first in element[:-1]:  # Skips the boolean part of the element Acess each key
+            if element[1] == True and first[parent] == target:
+                trueCounter += 1
+            elif element[1] == False and first[parent] == target:
+                falseCounter += 1
+
+    if trueCounter == 0 or falseCounter == 0:
+        return True
+    else:
+        return False
 
 # Get entrophy on each key based on data
 def entropy(target_key,data):
-    print('Solving Entrophy for', target_key)
+    #print('Solving Entrophy for', target_key)
     frequent_value_list = create_children_from(target_key, data)
-    print('Key:',target_key, 'Values:', frequent_value_list)
+    #print('Key:',target_key, 'Values:', frequent_value_list)
 
     key_entropy = 0.0
     #For each frequent value
     for x in frequent_value_list:
         #Determine Count value for class 0 and class 1
         freq_val_counter = attributeCounter(target_key, x, data)
-        print(x, freq_val_counter[0],freq_val_counter[1])
+        #print(x, freq_val_counter[0],freq_val_counter[1])
 
         #Store those values
         frequent_value = x
@@ -153,21 +208,21 @@ def entropy(target_key,data):
         class0 = float(trueCounter)
         class1 = float(falseCounter)
 
-        print("Class0 (True) = ", trueCounter,"Class 1 (False", falseCounter)
+        #print("Class0 (True) = ", trueCounter,"Class 1 (False", falseCounter)
         total = class0 + class1
         x = float(class0 / total)
         y = float(class1 / total)
         if x == 0 or y == 0:
-            print('PURE DATA!')
+            #print('PURE DATA!')
             subEntrophy = 0
         else:
             grandTotal = float(total / len(data))
-            print('sub-entropy for', ((-x) * math.log(x, 2) - y * math.log(y, 2)))
+            #print('sub-entropy for', ((-x) * math.log(x, 2) - y * math.log(y, 2)))
             subEntrophy = ((-x) * math.log(x, 2) - y * math.log(y, 2)) * grandTotal
-        print('sub-entrophy * ratio(', int(total), '/', len(data), ') is', subEntrophy)
+        #print('sub-entrophy * ratio(', int(total), '/', len(data), ') is', subEntrophy)
         key_entropy += subEntrophy
-        print('\n')
-    print('Total entropy for', frequent_value_list, 'is', key_entropy)
+        #print('\n')
+    #print('Total entropy for', frequent_value_list, 'is', key_entropy)
     return key_entropy
 
 
@@ -175,45 +230,124 @@ def entropy(target_key,data):
 #1) Determine which attribute to split
 def best_split(data,targetAttr):
     #Get all the attributes
-    print("Solving for Best Split..")
+    #print("Solving for Best Split..")
     entropyList = {}  # holds all the entrophy for all attributes
 
-    print('Current Keys are:')
-    print(targetAttr)
-    print('\n')
+    #print('Current Keys are:')
+    #print(targetAttr)
+    #print('\n')
     #Solve for entrophy to determine best split (lowest entrophy
     for x in targetAttr:
         attrEntropy = entropy(x,data)
-        print('Key:', x, 'Entropy:', attrEntropy)
+        #print('Key:', x, 'Entropy:', attrEntropy)
         entropyList.update({x:attrEntropy})
-        print('\n')
+        #print('\n')
 
     #Print keys
-    lowest =  min(entropyList.values())
-    startingKey = ''
+    if len(entropyList) != 0:
+        lowest =  min(entropyList.values())
+
+    print 'Entropy List - Choose Lowest Entropy'
+    print entropyList
+
     for key,value in entropyList.iteritems():
         if value == lowest:
-            startingKey = key
-            print('best_split is',key)
-    return startingKey
+            bestKeyToSplit = key
+            #print('best_split is',key)
+    return bestKeyToSplit
 
-#create a node in a digraph
+#Print the children
+#dot.edges([A + B])
+#dot.edge('B', 'L', constraint='false')
+def printTree(node):
+    global characterIndex
+    global availableIndex
+    #print('Parent', str(node))
+    #print('Parent Index', characterIndex)
+    dot.node(chr(characterIndex), str(node))  # 65
 
-def printTree(root, characterIndex): #(node, character Index)
-    print('Building a Tree for', str(root))
-    print(characterIndex)
-    dot.node(chr(characterIndex), str(root))
-    if len(root.children) != 0: #If Parents have children
-        counter = 1
-        print(counter)
-        for x in root.children:
-            #Create a child with each one
-            printTree(x, characterIndex + counter)
-            #Create an egde for each one
+    parent = characterIndex
+
+    #if not node.children:
+        #print 'I have no Children!'
+
+    children_nodes = []
+    children_nodes_index = []
+
+    if node.children != 0:
+        for x in node.children:
+            #print('Child', str(x))
+            characterIndex += 1
+            availableIndex += 1
+            dot.edges([chr(parent) + chr(availableIndex)])
+            #print(parent)
+            #print('will connect to')
+            #print 'Child Index',availableIndex
+            children_nodes.append(x)
+            children_nodes_index.append(availableIndex)
+        #print('\n')
+        counter = 0
+        for child in children_nodes:
+            characterIndex = children_nodes_index[counter]
             counter += 1
+            printTree(child)
 
-def TreeGrowth(parent):
-    print()
+def TreeGrowth(node, data): # {node : examples}
+    print '\nFunction Tree Growth'
+    print(node)
+
+    attr = get_keys(data)
+
+    remainingKeys = delete_key(str(node), attr)
+
+    # 3. For each value of A, create a new child node
+    root_node_children = create_children_from(node, data)
+    for x in root_node_children:
+        child_node = Node(x)
+        node.addChild(child_node)
+    print(root_node_children)
+
+    # 4. Split training{Examples to child nodes}
+    for child in node.children:
+        temp_List = split_training_set(str(node), str(child), data)
+        for y in temp_List:
+            child.add_data(y)
+        print(str(child), '=', len(temp_List))
+
+    # 5. For each child node /subset
+    # Stopping growing tree if pure
+    for child in node.children:
+        print(child)
+        #print(child.trainingset)
+        purity = isPure(str(node), str(child), child.trainingset)
+        if purity:
+            print 'Pure! : Tree Stops Growing'
+            test = attributeCounter(str(node), str(child), child.trainingset)
+            print(test[0], test[1])
+
+            if test[1] == 0:
+                # Add child to node
+                node_to_split = Node('Hired')
+                child.addChild(node_to_split)
+            elif test[0] == 0:
+                node_to_split = Node('Not_Hired')
+                # Add child to node
+                child.addChild(node_to_split)
+        else:
+            # If child node is not pure, grow tree
+            print 'Split! : Grow Tree'
+            child_split = best_split(child.trainingset, remainingKeys)
+            print 'Child Split is', child_split
+            node_to_split = Node(child_split)
+
+            print '\n'
+            #Add child to node
+            child.addChild(node_to_split)
+
+            ## Problem is value is getting treated like a key
+            TreeGrowth(node_to_split, child.trainingset)
+
+
 
 #ID3 Decision Tree
 def decisionTree(data):
@@ -234,7 +368,6 @@ def decisionTree(data):
 
     print('Starting Keys are:')
     print(attr)
-    print('\n')
 
     # 1. Split the best attribute
     starting_split = best_split(data,attr)
@@ -245,73 +378,22 @@ def decisionTree(data):
     #Delete the Key off the attributres
     counter = 0
     for x in attr:
-        print(x)
         if str(x) == str(root_node):
             del attr[counter]
         counter += 1
     print('\n')
 
-    # 2. Decision attribute for this node <-A
+    remainingKeys = delete_key(str(root_node),attr)
 
-    # 3. For each value of A, create a new child node
-    root_node_children = create_children_from(starting_split,data)
-    for x in root_node_children:
-        print(x)
-        child_node = Node(x)
-        root_node.addChild(child_node)
+    #Tree Growth based on root node
+    TreeGrowth(root_node, data)
+    print('\n' * 5)
+    #Print rootNode
+    #print(root_node)
+    #dot.node('A', str(root_node))  # 65
 
-    #Print Children
-    print(root_node_children)
-
-    # 4. Split training{Examples to child nodes}
-    for child in root_node.children:
-        temp_List = split_training_set(str(root_node), str(child), data)
-        for y in temp_List:
-            child.add_data(y)
-
-
-    # 5. For each child node /subset
-    for node in root_node.children:
-        print(node)
-        subset = node.trainingset
-        # if subset is pure: STOP
-        test = attributeCounter(str(root_node), str(node), subset)
-        if test[0] == 0 or test[1] == 0:
-            print(test[0], test[1])
-            print('No Need to Split - SET IS PURE')
-
-        # else: Split (child_node, {subset})
-        else:
-            child_split = best_split(subset,attr)
-            print('Child Split for', str(node),'is' ,child_split)
-
-
-
-
-
-    #Print the tree Node based on its children
-    #printTree(root_node,65)
-    #dot.render('test-output/decision-tree.gv', view=True)
-
-
-#Printing the Tree
-from graphviz import Digraph
-
-dot = Digraph(comment='The Decision Tree')
-#Print the Title Node and the Best Split
-dot.node('A', 'Hired?') #65
-
-#Print the children
-#dot.edges([A + B])
-#dot.edge('B', 'L', constraint='false')
-
-
-from graphviz import Source
-
-src = Source('digraph "the holy hand grenade" { rankdir=LR; 1 -> 2 -> 3 -> lob }')
-
-print(dot.source)
-print(ord('A'))
+    printTree(root_node)
+    dot.render('test-output/decision-tree.gv', view=True)
 
 #main
 #Convert a tuple to a list

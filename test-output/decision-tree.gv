@@ -10,13 +10,23 @@ digraph {
 		E -> F
 		E -> G
 	F [label=no]
+		F -> H
+	H [label=Not_Hired]
 	G [label=yes]
+		G -> I
+	I [label=Hired]
 	C [label=Mid]
+		C -> J
+	J [label=Hired]
 	D [label=Junior]
-		D -> H
-	H [label=phd]
-		H -> I
-		H -> J
-	I [label=no]
-	J [label=yes]
+		D -> K
+	K [label=phd]
+		K -> L
+		K -> M
+	L [label=no]
+		L -> N
+	N [label=Hired]
+	M [label=yes]
+		M -> O
+	O [label=Not_Hired]
 }

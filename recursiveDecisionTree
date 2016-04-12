@@ -26,7 +26,7 @@ Format Counters
 #[({},bool])]
 
 
-inputs = [
+inputs2 = [
     ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'no'}, False),
     ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'yes'}, False),
     ({'level': 'Mid', 'lang': 'Python', 'tweets': 'no', 'phd': 'no'}, True),
@@ -44,7 +44,7 @@ inputs = [
 ]
 
 #Test for root node LANG:
-inputs2 = [
+inputs = [
     ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'no',}, False),
     ({'level': 'Senior', 'lang': 'Java', 'tweets': 'no', 'phd': 'yes'}, False),
     ({'level': 'Mid', 'lang': 'Python', 'tweets': 'no', 'phd': 'no'}, True),
